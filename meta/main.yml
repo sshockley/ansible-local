@@ -1,8 +1,8 @@
 ---
 galaxy_info:
   author: sshockley
-  role_name: ansible_local
-  description: Install and configure ansible-local on your system.
+  role_name: local
+  description: Install and configure sshockley.local on your system.
   license: Apache-2.0
   company: none
   min_ansible_version: "2.12"
@@ -28,7 +28,7 @@ galaxy_info:
         - all
 
   galaxy_tags:
-    - ansible-local
+    - local
     - infrastructure
     - linux
     - system

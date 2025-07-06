@@ -1,5 +1,5 @@
 ---
 roles:
-  - name: sshockley.ansible-local
+  - name: sshockley.local
 collections:
   - name: community.general
