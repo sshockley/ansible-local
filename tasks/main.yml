@@ -1,0 +1,16 @@
+---
+# tasks file for ansible-local
+
+- name: 'linux : configure snmpd daemon'
+  become: true
+  template:
+    src: 'aliases.sh.j2'
+    dest: '/etc/profile.d/aliases.sh'
+    owner: root
+    group: root
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: bin_t
+    selevel: s0
+
