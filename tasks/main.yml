@@ -14,6 +14,19 @@
     setype: bin_t
     selevel: s0
 
+- name: 'Linux : create Cockpit directory'
+  become: true
+  file:
+    path: '/etc/cockpit'
+    state: directory
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+    seuser: system_u
+    serole: object_r
+    setype: etc_t
+    selevel: s0
+
 - name: 'Linux : Install Cockpit disallowed-users'
   become: true
   ansible.builtin.template:
