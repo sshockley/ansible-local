@@ -1,2 +1,3 @@
 ---
 # defaults file for sshockley.local
+cockpit_disallowed_users: root
