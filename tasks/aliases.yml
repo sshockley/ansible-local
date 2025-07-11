@@ -1,0 +1,15 @@
+---
+# Aliases tasks file for sshockley.local
+
+- name: 'aliases | Install aliases.sh'
+  become: true
+  ansible.builtin.template:
+    src: 'aliases.sh.j2'
+    dest: '/etc/profile.d/aliases.sh'
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+    seuser: system_u
+    serole: object_r
+    setype: bin_t
+    selevel: s0

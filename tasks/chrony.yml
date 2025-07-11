@@ -1,0 +1,18 @@
+---
+# Chrony tasks file for sshockley.local
+
+- name: 'chrony | Configure chronyd'
+  become: true
+  ansible.builtin.template:
+    src: 'chrony.conf.j2'
+    dest: '/etc//chrony.conf'
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+    seuser: system_u
+    serole: object_r
+    setype: etc_t
+    selevel: s0
+  notify:
+    - restart chronyd
+    - enabled chronyd
