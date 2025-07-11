@@ -1,3 +1,4 @@
 ---
 # defaults file for sshockley.local
 cockpit_disallowed_users: root
+chrony_servers: [ "pool.ntp.org" ]
