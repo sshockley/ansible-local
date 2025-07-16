@@ -1,2 +1,10 @@
 ---
 # tasks file for sshockley.local
+- name: Aliases
+  ansible.builtin.include_tasks: aliases.yml
+
+- name: Chrony
+  ansible.builtin.include_tasks: chrony.yml
+
+- name: Cockpit
+  ansible.builtin.include_tasks: cockpit.yml
