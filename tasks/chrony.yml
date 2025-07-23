@@ -14,5 +14,5 @@
     setype: etc_t
     selevel: s0
   notify:
-    - restart chronyd
-    - enabled chronyd
+    - Restart chronyd
+    - Enabled chronyd
