@@ -15,4 +15,4 @@
     selevel: s0
   notify:
     - Restart chronyd
-    - Enabled chronyd
+    - Enable chronyd
