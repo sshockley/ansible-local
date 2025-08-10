@@ -1,2 +1,4 @@
 ---
 # vars file for sshockley.local
+
+chrony_config: /etc/chrony.conf

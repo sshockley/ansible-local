@@ -5,7 +5,7 @@
   become: true
   ansible.builtin.template:
     src: 'chrony.conf.j2'
-    dest: '/etc//chrony.conf'
+    dest: '{{ chrony_config }}'
     owner: root
     group: root
     mode: u=rw,g=r,o=r
