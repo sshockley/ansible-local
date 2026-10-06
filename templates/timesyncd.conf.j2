@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+# systemd-timesyncd client configuration
+
+[Time]
+NTP={{ time_sync_servers | join(' ') }}
+{% if time_sync_fallback_servers | length > 0 %}
+FallbackNTP={{ time_sync_fallback_servers | join(' ') }}
+{% endif %}

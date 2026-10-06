@@ -4,8 +4,16 @@
 - name: Aliases
   ansible.builtin.include_tasks: aliases.yml
 
-- name: Chrony
-  ansible.builtin.include_tasks: chrony.yml
+- name: Time sync | Validate provider
+  ansible.builtin.assert:
+    that:
+      - time_sync_provider in ['chrony', 'timesyncd']
+      - time_sync_provider != 'timesyncd' or ansible_service_mgr == 'systemd'
+    fail_msg: "time_sync_provider must be chrony or timesyncd (timesyncd requires systemd)"
+    quiet: true
+
+- name: Time sync
+  ansible.builtin.include_tasks: "{{ time_sync_provider }}.yml"
 
 - name: Cockpit
   ansible.builtin.include_tasks: cockpit.yml

@@ -1,6 +1,23 @@
 ---
 # Chrony tasks file for sshockley.local
 
+- name: 'chrony | Gather service facts'
+  ansible.builtin.service_facts:
+
+- name: 'chrony | Stop and disable systemd-timesyncd'
+  become: true
+  ansible.builtin.systemd_service:
+    name: systemd-timesyncd
+    state: stopped
+    enabled: false
+  when: "'systemd-timesyncd.service' in ansible_facts.services"
+
+- name: 'chrony | Install chrony'
+  become: true
+  ansible.builtin.package:
+    name: '{{ chrony_package }}'
+    state: present
+
 - name: 'chrony | Configure chronyd'
   become: true
   ansible.builtin.template:
@@ -13,6 +30,11 @@
     serole: object_r
     setype: etc_t
     selevel: s0
-  notify:
-    - Restart chronyd
-    - Enable chronyd
+  notify: Restart chrony
+
+- name: 'chrony | Enable and start chrony'
+  become: true
+  ansible.builtin.service:
+    name: '{{ chrony_service }}'
+    state: started
+    enabled: true

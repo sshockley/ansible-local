@@ -1,5 +1,18 @@
 ---
 # defaults file for sshockley.local
 cockpit_disallowed_users: root
-chrony_servers: [ "pool.ntp.org" ]
-chrony_config: /etc/chrony.conf
+
+# Time sync provider: chrony | timesyncd
+time_sync_provider: chrony
+time_sync_servers: ["pool.ntp.org"]
+time_sync_fallback_servers: []
+
+chrony_servers: "{{ time_sync_servers }}"
+chrony_package: "{{ _time_sync.chrony_package }}"
+chrony_service: "{{ _time_sync.chrony_service }}"
+chrony_config: "{{ _time_sync.chrony_config }}"
+# leapseclist requires chrony >= 4.4
+chrony_leapseclist: false
+
+timesyncd_package: "{{ _time_sync.timesyncd_package }}"
+timesyncd_config: /etc/systemd/timesyncd.conf.d/ansible.conf
