@@ -5,11 +5,20 @@
 server {{ server }} iburst
 {% endfor %}
 
-# Use NTP servers from DHCP.
-sourcedir /run/chrony-dhcp
+# Use NTP servers from DHCP and drop-in source directories.
+{% for dir in chrony_sourcedirs %}
+sourcedir {{ dir }}
+{% endfor %}
+{% if chrony_confdirs %}
+
+# Include configuration drop-in directories.
+{% for dir in chrony_confdirs %}
+confdir {{ dir }}
+{% endfor %}
+{% endif %}
 
 # Record the rate at which the system clock gains/losses time.
-driftfile /var/lib/chrony/drift
+driftfile {{ chrony_driftfile }}
 
 # Allow the system clock to be stepped in the first three updates
 # if its offset is larger than 1 second.
@@ -35,7 +44,11 @@ rtcsync
 #authselectmode require
 
 # Specify file containing keys for NTP authentication.
+{% if chrony_keyfile %}
+keyfile {{ chrony_keyfile }}
+{% else %}
 #keyfile /etc/chrony.keys
+{% endif %}
 
 # Save NTS keys and cookies.
 ntsdumpdir /var/lib/chrony

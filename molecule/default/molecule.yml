@@ -1,24 +1,26 @@
 ---
-#
-# Ansible managed
-#
 dependency:
   name: galaxy
   options:
     role-file: requirements.yml
     requirements-file: requirements.yml
-lint: |
-  set -e
-  yamllint .
-  ansible-lint
 driver:
   name: docker
 platforms:
-  - name: "sshockley.local-${image:-fedora}-${tag:-latest}${TOX_ENVNAME}"
-    image: "${namespace:-robertdebock}/${image:-fedora}:${tag:-latest}"
+  - name: local-default-fedora
+    image: robertdebock/fedora:latest
     command: /sbin/init
+    cgroupns_mode: host
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    privileged: true
+    pre_build_image: true
+  - name: local-default-debian
+    image: robertdebock/debian:latest
+    command: /sbin/init
+    cgroupns_mode: host
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     privileged: true
     pre_build_image: true
 provisioner:

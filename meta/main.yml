@@ -1,11 +1,12 @@
 ---
 galaxy_info:
   author: sshockley
+  namespace: sshockley
   role_name: local
-  description: Install and configure sshockley.local on your system.
+  description: Configure shell aliases, time sync (chrony or systemd-timesyncd) and Cockpit login restrictions.
   license: Apache-2.0
   company: none
-  min_ansible_version: "2.12"
+  min_ansible_version: "2.15"
 
   platforms:
     - name: Alpine

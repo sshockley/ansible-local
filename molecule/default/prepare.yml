@@ -6,3 +6,9 @@
 
   roles:
     - role: robertdebock.bootstrap
+
+  tasks:
+    - name: Install cockpit-ws so the Cockpit tasks are exercised
+      ansible.builtin.package:
+        name: cockpit-ws
+        state: present

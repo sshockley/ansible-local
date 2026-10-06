@@ -4,6 +4,68 @@
   become: true
   gather_facts: true
 
+  vars_files:
+    - ../../vars/main.yml
+
+  vars:
+    _provider: "{{ time_sync_provider | default('chrony') }}"
+
   tasks:
-    - name: Check if connection still works
-      ansible.builtin.ping:
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Read aliases.sh
+      ansible.builtin.slurp:
+        src: /etc/profile.d/aliases.sh
+      register: _aliases
+
+    - name: Check aliases.sh
+      ansible.builtin.assert:
+        that:
+          - "\"alias l='ls -alF'\" in (_aliases.content | b64decode)"
+
+    - name: Check chrony
+      when: _provider == 'chrony'
+      block:
+        - name: Read chrony config
+          ansible.builtin.slurp:
+            src: "{{ _time_sync.chrony_config }}"
+          register: _chrony_conf
+
+        - name: Check chrony config and service
+          ansible.builtin.assert:
+            that:
+              - "'server pool.ntp.org iburst' in (_chrony_conf.content | b64decode)"
+              - ansible_facts.services[_time_sync.chrony_service ~ '.service'].state == 'running'
+              - ansible_facts.services[_time_sync.chrony_service ~ '.service'].status == 'enabled'
+
+    - name: Check systemd-timesyncd
+      when: _provider == 'timesyncd'
+      block:
+        - name: Read systemd-timesyncd config
+          ansible.builtin.slurp:
+            src: /etc/systemd/timesyncd.conf.d/ansible.conf
+          register: _timesyncd_conf
+
+        # Not checked for running: timesyncd does not start inside containers
+        - name: Check systemd-timesyncd config and service
+          ansible.builtin.assert:
+            that:
+              - "'NTP=pool.ntp.org' in (_timesyncd_conf.content | b64decode)"
+              - ansible_facts.services['systemd-timesyncd.service'].status == 'enabled'
+
+    - name: Stat Cockpit directory
+      ansible.builtin.stat:
+        path: /etc/cockpit
+      register: _cockpit_dir
+
+    - name: Read Cockpit disallowed-users
+      ansible.builtin.slurp:
+        src: /etc/cockpit/disallowed-users
+      register: _cockpit_users
+
+    - name: Check Cockpit
+      ansible.builtin.assert:
+        that:
+          - _cockpit_dir.stat.mode == '0755'
+          - "'root' in (_cockpit_users.content | b64decode).splitlines()"

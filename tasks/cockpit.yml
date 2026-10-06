@@ -1,28 +1,28 @@
 ---
 # Cockpit tasks file for sshockley.local
 
-- name: 'cockpit | Create Cockpit directory'
-  become: true
-  ansible.builtin.file:
-    path: '/etc/cockpit'
-    state: directory
-    owner: root
-    group: root
-    mode: u=rw,g=r,o=r
-    seuser: system_u
-    serole: object_r
-    setype: etc_t
-    selevel: s0
+- name: 'cockpit | Check whether Cockpit is installed'
+  ansible.builtin.stat:
+    path: /usr/share/cockpit
+  register: _cockpit_installed
 
-- name: 'cockpit | Install Cockpit disallowed-users'
-  become: true
-  ansible.builtin.template:
-    src: 'cockpit-disallowed-users.j2'
-    dest: '/etc/cockpit/disallowed-users'
-    owner: root
-    group: root
-    mode: u=rw,g=r,o=r
-    seuser: system_u
-    serole: object_r
-    setype: etc_t
-    selevel: s0
+- name: 'cockpit | Configure Cockpit'
+  when: _cockpit_installed.stat.exists
+  block:
+    - name: 'cockpit | Create Cockpit directory'
+      become: true
+      ansible.builtin.file:
+        path: '/etc/cockpit'
+        state: directory
+        owner: root
+        group: root
+        mode: u=rwx,g=rx,o=rx
+
+    - name: 'cockpit | Install Cockpit disallowed-users'
+      become: true
+      ansible.builtin.template:
+        src: 'cockpit-disallowed-users.j2'
+        dest: '/etc/cockpit/disallowed-users'
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r

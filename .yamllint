@@ -19,5 +19,6 @@ rules:
     check-keys: false
 
 ignore: |
+  .ansible/
   .tox/
   .cache/

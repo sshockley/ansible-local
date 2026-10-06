@@ -1,6 +1,14 @@
 ---
 # defaults file for sshockley.local
-cockpit_disallowed_users: root
+
+# Shell aliases written to /etc/profile.d/aliases.sh (name: command)
+local_aliases:
+  l: ls -alF
+
+# Cockpit settings are only applied when Cockpit is installed
+cockpit_manage: true
+cockpit_disallowed_users:
+  - root
 
 # Time sync provider: chrony | timesyncd
 time_sync_provider: chrony
@@ -11,6 +19,10 @@ chrony_servers: "{{ time_sync_servers }}"
 chrony_package: "{{ _time_sync.chrony_package }}"
 chrony_service: "{{ _time_sync.chrony_service }}"
 chrony_config: "{{ _time_sync.chrony_config }}"
+chrony_driftfile: "{{ _time_sync.chrony_driftfile }}"
+chrony_keyfile: "{{ _time_sync.chrony_keyfile }}"
+chrony_confdirs: "{{ _time_sync.chrony_confdirs }}"
+chrony_sourcedirs: "{{ _time_sync.chrony_sourcedirs }}"
 # leapseclist requires chrony >= 4.4
 chrony_leapseclist: false
 

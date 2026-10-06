@@ -13,11 +13,19 @@
   when: (chrony_service ~ '.service') in ansible_facts.services
 
 - name: 'timesyncd | Install systemd-timesyncd'
-  become: true
-  ansible.builtin.package:
-    name: '{{ timesyncd_package }}'
-    state: present
   when: timesyncd_package | length > 0
+  block:
+    - name: 'timesyncd | Install package'
+      become: true
+      ansible.builtin.package:
+        name: '{{ timesyncd_package }}'
+        state: present
+  rescue:
+    - name: 'timesyncd | Report install failure'
+      ansible.builtin.fail:
+        msg: >-
+          Could not install {{ timesyncd_package }}.
+          {{ 'On EL, systemd-timesyncd comes from EPEL; enable EPEL first.' if ansible_facts['os_family'] == 'RedHat' else '' }}
 
 - name: 'timesyncd | Create drop-in directory'
   become: true

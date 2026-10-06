@@ -2,18 +2,34 @@
 # tasks file for sshockley.local
 
 - name: Aliases
-  ansible.builtin.include_tasks: aliases.yml
+  ansible.builtin.import_tasks: aliases.yml
+  tags: aliases
+
+- name: Time sync | Validate OS family
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] in _time_sync_os
+    fail_msg: "Unsupported OS family {{ ansible_facts['os_family'] }} (supported: {{ _time_sync_os | list | join(', ') }})"
+    quiet: true
+  tags: time_sync
 
 - name: Time sync | Validate provider
   ansible.builtin.assert:
     that:
       - time_sync_provider in ['chrony', 'timesyncd']
-      - time_sync_provider != 'timesyncd' or ansible_service_mgr == 'systemd'
+      - time_sync_provider != 'timesyncd' or ansible_facts['service_mgr'] == 'systemd'
     fail_msg: "time_sync_provider must be chrony or timesyncd (timesyncd requires systemd)"
     quiet: true
+  tags: time_sync
 
 - name: Time sync
-  ansible.builtin.include_tasks: "{{ time_sync_provider }}.yml"
+  ansible.builtin.include_tasks:
+    file: "{{ time_sync_provider }}.yml"
+    apply:
+      tags: time_sync
+  tags: time_sync
 
 - name: Cockpit
-  ansible.builtin.include_tasks: cockpit.yml
+  ansible.builtin.import_tasks: cockpit.yml
+  when: cockpit_manage | bool
+  tags: cockpit

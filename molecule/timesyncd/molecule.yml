@@ -1,0 +1,51 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+    requirements-file: requirements.yml
+driver:
+  name: docker
+platforms:
+  - name: local-timesyncd-fedora
+    image: robertdebock/fedora:latest
+    command: /sbin/init
+    cgroupns_mode: host
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    privileged: true
+    pre_build_image: true
+  - name: local-timesyncd-debian
+    image: robertdebock/debian:latest
+    command: /sbin/init
+    cgroupns_mode: host
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        time_sync_provider: timesyncd
+  playbooks:
+    prepare: ../default/prepare.yml
+    converge: ../default/converge.yml
+    verify: ../default/verify.yml
+verifier:
+  name: ansible
+scenario:
+  # systemd-timesyncd won't start in containers (ConditionVirtualization=!container),
+  # so the start task reports changed on every run; idempotence is skipped.
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - cleanup
+    - destroy

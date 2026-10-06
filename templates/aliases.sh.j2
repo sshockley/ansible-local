@@ -1,3 +1,5 @@
 # {{ ansible_managed }}
 # Local aliases
-alias l='ls -alF'
+{% for name, command in local_aliases.items() %}
+alias {{ name }}={{ command | quote }}
+{% endfor %}

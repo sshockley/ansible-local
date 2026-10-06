@@ -7,21 +7,37 @@ _time_sync_os:
     chrony_package: chrony
     chrony_service: chrony
     chrony_config: /etc/chrony/chrony.conf
+    chrony_driftfile: /var/lib/chrony/chrony.drift
+    chrony_keyfile: /etc/chrony/chrony.keys
+    chrony_confdirs: [/etc/chrony/conf.d]
+    chrony_sourcedirs: [/run/chrony-dhcp, /etc/chrony/sources.d]
     timesyncd_package: systemd-timesyncd
   RedHat:
     chrony_package: chrony
     chrony_service: chronyd
     chrony_config: /etc/chrony.conf
+    chrony_driftfile: /var/lib/chrony/drift
+    chrony_keyfile: ""
+    chrony_confdirs: []
+    chrony_sourcedirs: [/run/chrony-dhcp]
     timesyncd_package: systemd-timesyncd  # EL requires EPEL
   Suse:
     chrony_package: chrony
     chrony_service: chronyd
     chrony_config: /etc/chrony.conf
+    chrony_driftfile: /var/lib/chrony/drift
+    chrony_keyfile: /etc/chrony.keys
+    chrony_confdirs: [/etc/chrony.d]
+    chrony_sourcedirs: [/run/chrony-dhcp]
     timesyncd_package: systemd  # timesyncd ships inside systemd
   Alpine:
     chrony_package: chrony
     chrony_service: chronyd
     chrony_config: /etc/chrony/chrony.conf
+    chrony_driftfile: /var/lib/chrony/drift
+    chrony_keyfile: ""
+    chrony_confdirs: []
+    chrony_sourcedirs: [/run/chrony-dhcp]
     timesyncd_package: ""  # no systemd
 
-_time_sync: "{{ _time_sync_os[ansible_os_family] | default(_time_sync_os['RedHat']) }}"
+_time_sync: "{{ _time_sync_os[ansible_facts['os_family']] }}"
