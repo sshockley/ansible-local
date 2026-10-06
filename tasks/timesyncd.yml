@@ -10,7 +10,9 @@
     name: '{{ chrony_service }}'
     state: stopped
     enabled: false
-  when: (chrony_service ~ '.service') in ansible_facts.services
+  when:
+    - (chrony_service ~ '.service') in ansible_facts.services
+    - ansible_facts.services[chrony_service ~ '.service'].status | default('unknown') not in ['unknown', 'not-found']
 
 - name: 'timesyncd | Install systemd-timesyncd'
   when: timesyncd_package | length > 0

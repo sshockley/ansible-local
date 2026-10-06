@@ -10,7 +10,9 @@
     name: systemd-timesyncd
     state: stopped
     enabled: false
-  when: "'systemd-timesyncd.service' in ansible_facts.services"
+  when:
+    - "'systemd-timesyncd.service' in ansible_facts.services"
+    - ansible_facts.services['systemd-timesyncd.service'].status | default('unknown') not in ['unknown', 'not-found']
 
 - name: 'chrony | Install chrony'
   become: true
